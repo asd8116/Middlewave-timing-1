@@ -1,86 +1,31 @@
 const express = require('express')
-const exphbs = require('express-handlebars')
-const Handlebars = require('handlebars')
-const bodyParser = require('body-parser')
-const methodOverride = require('method-override')
-const session = require('express-session')
-const passport = require('passport')
-const flash = require('connect-flash')
 const app = express()
-const mongoose = require('mongoose')
+const port = 3000
 
-// 判別開發環境
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config() // 使用 dotenv 讀取 .env 檔案
-}
-
-Handlebars.registerHelper('switch', function(value, options) {
-  this.switch_value = value
-  this.switch_break = false
-  return options.fn(this)
+// 列出全部 Todo
+app.get('/', (req, res) => {
+  res.send('列出全部 Todo')
 })
 
-Handlebars.registerHelper('case', function(value, options) {
-  if (value == this.switch_value) {
-    this.switch_break = true
-    return options.fn(this)
-  }
+// 新增一筆 Todo 頁面
+app.get('/new', (req, res) => {
+  res.send('新增 Todo 頁面')
 })
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/records', {
-  useNewUrlParser: true,
-  useCreateIndex: true
-})
-const db = mongoose.connection
-
-db.on('error', () => {
-  console.log('mongodb error!')
+// 顯示一筆 Todo 的詳細內容
+app.get('/:id', (req, res) => {
+  res.send('顯示一筆 Todo')
 })
 
-db.once('open', () => {
-  console.log('mongodb connected!')
+// 新增一筆  Todo
+app.post('/', (req, res) => {
+  res.send('新增一筆  Todo')
 })
 
-app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
-
-app.set('view engine', 'handlebars')
-
-app.use(express.static('public'))
-
-app.use(bodyParser.urlencoded({ extended: true }))
-
-app.use(methodOverride('_method'))
-
-app.use(flash())
-
-app.use(
-  session({
-    secret: 'kerokero',
-    resave: 'false',
-    saveUninitialized: 'false'
-  })
-)
-
-app.use(passport.initialize())
-
-app.use(passport.session())
-
-require('./config/passport')(passport)
-
-app.use((req, res, next) => {
-  res.locals.user = req.user
-  res.locals.isAuthenticated = req.isAuthenticated() // 辨識是否已經登入
-  res.locals.success_msg = req.flash('success_msg')
-  res.locals.warning_msg = req.flash('warning_msg')
-  next()
+app.delete('/:id/delete', (req, res) => {
+  res.send('刪除 Todo')
 })
 
-// routes
-app.use('/', require('./routes/home'))
-app.use('/rewrites', require('./routes/rewrites'))
-app.use('/users', require('./routes/users'))
-app.use('/auth', require('./routes/auths'))
-
-app.listen(process.env.PORT || 3000, () => {
-  console.log('App is running: localhost:3000')
+app.listen(port, () => {
+  console.log(`App running on port ${port}`)
 })
