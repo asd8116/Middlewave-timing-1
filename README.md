@@ -1,3 +1,3 @@
-# Clone 用初始文件檔案
+# 撰寫 Middleware 小工具 for Time
 
-## Set up by Express & MongoDB
+## Set up by Express
